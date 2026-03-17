@@ -1,0 +1,35 @@
+---
+- name: Install Docker
+  import_role:
+    name: docker
+
+- name: Create Filebeat directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/filebeat
+    - /opt/filebeat/logs
+
+- name: Configure Filebeat
+  template:
+    src: filebeat.yml.j2
+    dest: /opt/filebeat/filebeat.yml
+    mode: '0644'
+  notify: restart filebeat
+
+- name: Run Filebeat container
+  docker_container:
+    name: filebeat
+    image: docker.elastic.co/beats/filebeat:8.13.0
+    state: started
+    restart_policy: always
+    user: root
+    volumes:
+      - /opt/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/log/nginx:/var/log/nginx:ro          # логи nginx с хоста
+      - /opt/filebeat/logs:/usr/share/filebeat/logs
+    env:
+      ELASTICSEARCH_HOST: "{{ elasticsearch_host }}"
+      ELASTICSEARCH_PORT: "{{ elasticsearch_port | string }}"

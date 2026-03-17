@@ -1,0 +1,58 @@
+---
+- name: Install Docker
+  import_role:
+    name: docker
+
+- name: Create Elasticsearch directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: 1000
+    group: 1000
+    mode: '0755'
+  loop:
+    - /opt/elasticsearch/data
+    - /opt/elasticsearch/config
+    - /opt/elasticsearch/logs
+
+- name: Configure Elasticsearch
+  template:
+    src: elasticsearch.yml.j2
+    dest: /opt/elasticsearch/config/elasticsearch.yml
+    owner: 1000
+    group: 1000
+    mode: '0644'
+  notify: restart elasticsearch
+
+- name: Set vm.max_map_count for Elasticsearch
+  sysctl:
+    name: vm.max_map_count
+    value: '262144'
+    state: present
+    reload: yes
+
+- name: Run Elasticsearch container
+  docker_container:
+    name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    state: started
+    restart_policy: always
+    env:
+      discovery.type: "single-node"
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - /opt/elasticsearch/data:/usr/share/elasticsearch/data
+      - /opt/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /opt/elasticsearch/logs:/usr/share/elasticsearch/logs
+    ports:
+      - "9200:9200"
+    ulimits:
+      - nofile:65536:65536
+
+- name: Wait for Elasticsearch to start
+  wait_for:
+    host: localhost
+    port: 9200
+    delay: 15
+    timeout: 120

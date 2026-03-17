@@ -1,0 +1,67 @@
+---
+- name: Add Zabbix repository
+  apt:
+    deb: https://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.4-1+ubuntu22.04_all.deb
+
+- name: Install Zabbix server + PostgreSQL client
+  apt:
+    name:
+      - zabbix-server-pgsql
+      - zabbix-frontend-php
+      - zabbix-apache-conf
+      - zabbix-sql-scripts
+      - zabbix-agent2
+      - postgresql-client-14
+      - python3-psycopg2
+    state: present
+    update_cache: yes
+
+- name: Check if Zabbix schema already imported
+  shell: >
+    PGPASSWORD="{{ zabbix_db_password }}"
+    psql
+    -h {{ zabbix_db_host }}
+    -p {{ zabbix_db_port }}
+    -U {{ zabbix_db_user }}
+    -d {{ zabbix_db_name }}
+    -c "SELECT COUNT(*) FROM users;"
+  register: schema_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Import Zabbix DB schema
+  shell: >
+    zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz |
+    PGPASSWORD="{{ zabbix_db_password }}"
+    psql
+    -h {{ zabbix_db_host }}
+    -p {{ zabbix_db_port }}
+    -U {{ zabbix_db_user }}
+    -d {{ zabbix_db_name }}
+  when: schema_check.failed
+
+- name: Configure zabbix_server.conf
+  template:
+    src: zabbix_server.conf.j2
+    dest: /etc/zabbix/zabbix_server.conf
+    owner: root
+    group: zabbix
+    mode: '0640'
+  notify: restart zabbix-server
+
+- name: Configure Zabbix frontend
+  template:
+    src: zabbix.conf.php.j2
+    dest: /etc/zabbix/web/zabbix.conf.php
+    owner: www-data
+    mode: '0640'
+
+- name: Enable and start services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - zabbix-server
+    - zabbix-agent2
+    - apache2

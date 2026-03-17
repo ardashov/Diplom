@@ -1,0 +1,15 @@
+<?php
+$DB['TYPE']     = 'POSTGRESQL';
+$DB['SERVER']   = '{{ zabbix_db_host }}';
+$DB['PORT']     = '{{ zabbix_db_port }}';
+$DB['DATABASE'] = '{{ zabbix_db_name }}';
+$DB['USER']     = '{{ zabbix_db_user }}';
+$DB['PASSWORD'] = '{{ zabbix_db_password }}';
+$DB['SCHEMA']   = 'public';
+$DB['ENCRYPTION']      = false;
+$DB['VERIFY_HOST']     = false;
+$DB['DOUBLE_IEEE754']  = true;
+$ZBX_SERVER      = 'zabbix.ru-central1.internal';
+$ZBX_SERVER_PORT = '10051';
+$ZBX_SERVER_NAME = 'Diploma Zabbix';
+$IMAGE_FORMAT_DEFAULT = IMAGE_FORMAT_PNG;

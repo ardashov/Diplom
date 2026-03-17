@@ -1,0 +1,11 @@
+server.port: 5601
+server.host: "0.0.0.0"
+server.name: "kibana"
+
+elasticsearch.hosts: ["http://{{ elasticsearch_host }}:{{ elasticsearch_port }}"]
+
+telemetry.enabled: false
+monitoring.ui.container.elasticsearch.enabled: false
+
+# Логи только в stdout — docker logs забирает их сам
+logging.root.level: info

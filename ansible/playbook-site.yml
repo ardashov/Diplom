@@ -1,0 +1,8 @@
+---
+- name: Deploy nginx web servers
+  hosts: webservers
+  become: yes
+  roles:
+    - nginx
+    - zabbix-agent
+    - filebeat
