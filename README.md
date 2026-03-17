@@ -133,10 +133,10 @@ terraform output
 | `elasticsearch_private_ip` | Приватный IP Elasticsearch |
 
 
-![Название скриншота 1](ссылка на скриншот 1)`
+![Название скриншота 1](https://github.com/ardashov/Diplom/blob/main/scr/scr_1.png)`
 
 
-![Название скриншота 2](ссылка на скриншот 2)`
+![Название скриншота 2](https://github.com/ardashov/Diplom/blob/main/scr/scr_2.png)`
 
 
 ### Managed PostgreSQL
@@ -147,7 +147,7 @@ terraform output
   - Подключение через FQDN кластера — при failover адрес не меняется
   - Порт: `6432` (pgbouncer)
 
-![Название скриншота 4](ссылка на скриншот 4)`
+![Название скриншота 4](https://github.com/ardashov/Diplom/blob/main/scr/scr_4.png)`
 
 ### Снапшоты дисков
 
@@ -156,7 +156,7 @@ terraform output
   - Хранение: 7 дней
   - Охват: все 6 ВМ (bastion, web1, web2, zabbix, elasticsearch, kibana)
 
-![Название скриншота 5](ссылка на скриншот 5)`
+![Название скриншота 5](https://github.com/ardashov/Diplom/blob/main/scr/scr_5.png)`
 
 ---
 
@@ -190,15 +190,13 @@ ALB_IP=$(cd terraform && terraform output -raw alb_public_ip)
 # Проверяем доступность
 curl -v http://158.160.193.128:80
 
-# Проверяем что трафик распределяется между серверами
-for i in {1..6}; do curl -s http://$ALB_IP:80 | grep -o "nginx"; done
 ```
 
-![Название скриншота 8](ссылка на скриншот 8)`
+![Название скриншота 8](https://github.com/ardashov/Diplom/blob/main/scr/scr_8.png)`
 
 ### Схема балансировщика
 
-![Название скриншота 3](ссылка на скриншот 3)`
+![Название скриншота 3](https://github.com/ardashov/Diplom/blob/main/scr/scr_3.png)`
 
 ```
 Application Load Balancer
@@ -223,10 +221,10 @@ URL:      http://89.169.135.18/zabbix/
 Пароль:   zabbix
 ```
 
-![Название скриншота 6](ссылка на скриншот 6)`
+![Название скриншота 6](https://github.com/ardashov/Diplom/blob/main/scr/scr_6.png)`
 
 
-![Название скриншота 6_1](ссылка на скриншот 6_1)`
+![Название скриншота 6_1](https://github.com/ardashov/Diplom/blob/main/scr/scr_6_1.png)`
 
 
 ### Подключённые хосты
@@ -271,7 +269,7 @@ web2 nginx error.log  ──┘
 URL: http://93.77.182.245:5601
 ```
 
-![Название скриншота 7](ссылка на скриншот 7)`
+![Название скриншота 7](https://github.com/ardashov/Diplom/blob/main/scr/scr_7.png)`
 
 
 ### Настройка Data View в Kibana
